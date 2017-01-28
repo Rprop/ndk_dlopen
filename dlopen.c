@@ -40,7 +40,7 @@ void JNIEXPORT ndk_init(JNIEnv *env)
             uintptr_t pd = (pv & ~(PAGE_SIZE - 1));
             mprotect((void *)pd, pv + 8u >= pu ? PAGE_SIZE * 2u : PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC);
             quick_on_stack_back = (void *)pv;
-
+            
 #if defined(__i386__)
             /*
              DEFINE_FUNCTION art_quick_on_stack_replace
@@ -60,6 +60,7 @@ void JNIEXPORT ndk_init(JNIEnv *env)
              END_FUNCTION art_quick_on_stack_back
             */
             memcpy(quick_on_stack_back, "\xC3\xFF\x74\x24\x08\xC3", 6);
+            quick_on_stack_back = (void *)(pv + 1); // inserts `ret` at first
 #elif defined(__x86_64__)
             // rdi, rsi, rdx, rcx, r8, r9
             /*
@@ -109,6 +110,8 @@ void JNIEXPORT ndk_init(JNIEnv *env)
 #else
 # error "not supported"
 #endif
+            LOGI("init done! quick_on_stack_replace = %p, quick_on_stack_back = %p",
+                 STUBS.generic_stub, quick_on_stack_back);
 		} //if
 	} //if
 }
