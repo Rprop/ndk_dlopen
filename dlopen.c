@@ -65,13 +65,15 @@ void JNIEXPORT ndk_init(JNIEnv *env)
             // rdi, rsi, rdx, rcx, r8, r9
             /*
              0x0000000000000000:     52      push rdx
-             0x0000000000000001:     FF E1   jmp rcx
+             0x0000000000000001:     52      push rdx
+             0x0000000000000002:     FF E1   jmp rcx
             */
-            memcpy(__insns, "\x52\xFF\xE1", 3);
+            memcpy(__insns, "\x52\x52\xFF\xE1", 4);
             /*
+             0x0000000000000000:     5A      pop rdx
              0x0000000000000000:     C3      ret
             */
-            memcpy(quick_on_stack_back, "\xC3", 1);
+            memcpy(quick_on_stack_back, "\x5A\xC3", 2);
 #elif defined(__aarch64__)
             // x0~x7
             /*
