@@ -91,23 +91,23 @@ void JNIEXPORT ndk_init(JNIEnv *env)
 #elif defined(__arm__)
             // r0~r3
             /*
-             0x0000000000000000:     04 E0 2D E5     str lr, [sp, #-4]!
+             0x0000000000000000:     08 E0 2D E5     str lr, [sp, #-8]!
              0x0000000000000004:     02 E0 A0 E1     mov lr, r2
              0x0000000000000008:     13 FF 2F E1     bx r3
             */
-            memcpy(__insns, "\x04\xE0\x2D\xE5\x02\xE0\xA0\xE1\x13\xFF\x2F\xE1", 12);
+            memcpy(__insns, "\x08\xE0\x2D\xE5\x02\xE0\xA0\xE1\x13\xFF\x2F\xE1", 12);
             if ((pv & 1u) != 0u) { // Thumb
                 /*
-                 0x0000000000000000:     08 BC   pop {r3}
-                 0x0000000000000002:     18 47   bx r3
+                 0x0000000000000000:     0C BC   pop {r2, r3}
+                 0x0000000000000002:     10 47   bx r2
                 */
-                memcpy((void *)(pv - 1), "\x08\xBC\x18\x47", 4);
+                memcpy((void *)(pv - 1), "\x0C\xBC\x10\x47", 4);
             } else {
                 /*
-                 0x0000000000000000:     04 30 9D E4     pop {r3}
-                 0x0000000000000004:     13 FF 2F E1     bx r3
+                 0x0000000000000000:     0C 00 BD E8     pop {r2, r3}
+                 0x0000000000000004:     12 FF 2F E1     bx r2
                 */
-                memcpy(quick_on_stack_back, "\x04\x30\x9D\xE4\x13\xFF\x2F\xE1", 8);
+                memcpy(quick_on_stack_back, "\x0C\x00\xBD\xE8\x12\xFF\x2F\xE1", 8);
             } //if
 #else
 # error "not supported"
